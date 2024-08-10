@@ -16,7 +16,7 @@
      <application
     
     
-        android:label="Custom Creations"
+        android:label="Cook Your Sofa"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 

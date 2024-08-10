@@ -11,13 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<String> categories = [
-    'Sofas',
-    'Curtains',
-    'Headboards',
-    'Beds',
-    'Custom Pieces'
-  ];
   String name = '';
   setData() async {
     await FirebaseFirestore.instance.collection('data').get().then(
@@ -85,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                   return CategoryCard(
                     categoryName: categories[index],
                     imagePath:
-                        'assets/cat/${index == 4 ? 'CustomPieces' : categories[index].toLowerCase()}.png',
+                        'assets/cat/${index == 4 ? 'CustomPieces' : categories[index]}.png',
                   );
                 },
               ),

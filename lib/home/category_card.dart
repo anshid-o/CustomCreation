@@ -1,3 +1,4 @@
+import 'package:custom_creations/home/item_page.dart';
 import 'package:flutter/material.dart';
 
 class CategoryCard extends StatelessWidget {
@@ -15,6 +16,9 @@ class CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Handle navigation to category details page
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ItemsPage(categoryName: categoryName),
+        ));
       },
       child: Card(
         elevation: 5.0,
