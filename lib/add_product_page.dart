@@ -14,6 +14,7 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   XFile? file;
   String imageUrl = '';
+  bool _isLoading = false; // Added loading state
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
@@ -91,50 +92,65 @@ class _AddProductPageState extends State<AddProductPage> {
               key: _formKey,
               child: ListView(
                 children: [
-                  imageUrl != ''
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                                height: size.height * .2,
-                                width: size.width * .4,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )),
-                            IconButton(
-                                onPressed: () async {
-                                  await _showOptionsDialog(context);
-                                  await _uploadImage();
-                                },
-                                icon: Icon(
-                                  Icons.change_circle_outlined,
-                                  size: 50,
-                                  color: cngreen,
-                                ))
-                          ],
+                  _isLoading // Check if the image is loading
+                      ? Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('Image Loading'),
+                              CircularProgressIndicator(),
+                            ],
+                          ), // Show loader
                         )
-                      : GestureDetector(
-                          onTap: () async {
-                            await _showOptionsDialog(context);
-                            await _uploadImage();
-                          },
-                          child: Container(
-                            height: size.height * .2,
-                            decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                border: Border.all(color: cngreen, width: 3),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: const Center(
-                                child: Icon(
-                              Icons.add_a_photo,
-                              size: 80,
-                            )),
-                          ),
-                        ),
+                      : imageUrl != ''
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                    height: size.height * .2,
+                                    width: size.width * .4,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
+                                IconButton(
+                                    onPressed: () async {
+                                      await _showOptionsDialog(context);
+                                      await _uploadImage();
+                                    },
+                                    icon: Icon(
+                                      Icons.change_circle_outlined,
+                                      size: 50,
+                                      color: cngreen,
+                                    ))
+                              ],
+                            )
+                          : GestureDetector(
+                              onTap: () async {
+                                await _showOptionsDialog(context);
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                await _uploadImage();
+                              },
+                              child: Container(
+                                height: size.height * .2,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[50],
+                                    border:
+                                        Border.all(color: cngreen, width: 3),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: const Center(
+                                    child: Icon(
+                                  Icons.add_a_photo,
+                                  size: 80,
+                                )),
+                              ),
+                            ),
                   SizedBox(height: 20),
                   TextFormField(
                     controller: _nameController,
@@ -311,6 +327,10 @@ class _AddProductPageState extends State<AddProductPage> {
         });
       } catch (e) {
         print(e.toString());
+      } finally {
+        setState(() {
+          _isLoading = false; // Stop loading
+        });
       }
     }
   }
