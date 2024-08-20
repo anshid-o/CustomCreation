@@ -46,5 +46,5 @@
 
 <h2>Contact</h2>
 <p>
-  For any inquiries or support, please contact <a href="mailto:your.email@example.com">your.email@example.com</a>.
+  For any inquiries or support, please contact <a href="anshidkoolimad@gmail.com">Mail</a>.
 </p>
