@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:custom_creations/constants.dart';
+import 'package:custom_creations/constants.dart'; // Assuming your color constants are here
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,25 +14,18 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   XFile? file;
   String imageUrl = '';
-  bool _isLoading = false; // Added loading state
+  bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
-  TextEditingController _stockCount = TextEditingController();
-  TextEditingController _customizationController = TextEditingController();
   TextEditingController _deliveryController = TextEditingController();
 
   String _category = 'Sofas';
-  bool _isCustomizationRequired = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
-    _stockCount.dispose();
-    _customizationController.dispose();
     _deliveryController.dispose();
     super.dispose();
   }
@@ -40,25 +33,26 @@ class _AddProductPageState extends State<AddProductPage> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
+      labelStyle: TextStyle(color: cngreen), // Use your custom color
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-          width: 2.0, // Adjust border width here
-          color: Colors.grey, // Border color (optional)
+          width: 2.0,
+          color: Colors.grey,
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-          width: 3.0, // Adjust border width here
-          color: Colors.black, // Border color (optional)
+          width: 2.5,
+          color: Colors.black,
         ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide(
-          width: 3.0, // Adjust border width here
-          color: Colors.blue, // Border color when focused (optional)
+          width: 2.5,
+          color: cngreen, // Color on focus
         ),
       ),
       contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
@@ -69,9 +63,9 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: cdgreen,
+      backgroundColor: cngreen,
       appBar: AppBar(
-        backgroundColor: cdgreen,
+        backgroundColor: cngreen,
         centerTitle: true,
         title: Text(
           'Add Product',
@@ -84,49 +78,72 @@ class _AddProductPageState extends State<AddProductPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
+          height: size.height * .75,
           decoration: BoxDecoration(
-              color: lightWoodcol, borderRadius: BorderRadius.circular(20)),
+            color: col30,
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Form(
               key: _formKey,
               child: ListView(
                 children: [
-                  _isLoading // Check if the image is loading
+                  _isLoading
                       ? Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text('Image Loading'),
-                              CircularProgressIndicator(),
-                            ],
-                          ), // Show loader
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: cngreen, width: 5)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: const [
+                                Icon(Icons.image),
+                                Text('Image Loading... ',
+                                    style: TextStyle(fontSize: 16)),
+                                SizedBox(
+                                    width:
+                                        10), // Small spacing between text and loader
+                                CircularProgressIndicator(),
+                              ],
+                            ),
+                          ),
                         )
-                      : imageUrl != ''
+                      : imageUrl.isNotEmpty
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(
-                                    height: size.height * .2,
-                                    width: size.width * .4,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: Image.network(
-                                        imageUrl,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )),
+                                  height: size.height * .2,
+                                  width: size.width * .4,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
                                 IconButton(
-                                    onPressed: () async {
-                                      await _showOptionsDialog(context);
-                                      await _uploadImage();
-                                    },
-                                    icon: Icon(
-                                      Icons.change_circle_outlined,
-                                      size: 50,
-                                      color: cngreen,
-                                    ))
+                                  onPressed: () async {
+                                    await _showOptionsDialog(context);
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    await _uploadImage();
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    size: 30,
+                                    color:
+                                        cngreen, // Custom green color for the edit icon
+                                  ),
+                                )
                               ],
                             )
                           : GestureDetector(
@@ -136,32 +153,26 @@ class _AddProductPageState extends State<AddProductPage> {
                                   _isLoading = true;
                                 });
                                 await _uploadImage();
+                                setState(() {
+                                  _isLoading = false;
+                                });
                               },
                               child: Container(
-                                height: size.height * .2,
+                                height: size.height * .15,
                                 decoration: BoxDecoration(
-                                    color: Colors.grey[50],
-                                    border:
-                                        Border.all(color: cngreen, width: 3),
-                                    borderRadius: BorderRadius.circular(20)),
+                                  color: Colors.grey[200],
+                                  border: Border.all(color: cngreen, width: 2),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                                 child: const Center(
-                                    child: Icon(
-                                  Icons.add_a_photo,
-                                  size: 80,
-                                )),
+                                  child: Icon(
+                                    Icons.add_a_photo,
+                                    size: 50,
+                                    color: Colors.black,
+                                  ),
+                                ),
                               ),
                             ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: _inputDecoration('Product Name'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter product name';
-                      }
-                      return null;
-                    },
-                  ),
                   SizedBox(height: 20),
                   TextFormField(
                     controller: _descriptionController,
@@ -189,35 +200,6 @@ class _AddProductPageState extends State<AddProductPage> {
                       }
                       return null;
                     },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _stockCount,
-                    decoration: _inputDecoration('Count'),
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter price';
-                      }
-                      if (double.tryParse(value) == null) {
-                        return 'Please enter a valid number';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _customizationController,
-                    decoration: _inputDecoration('Customization Options'),
-                    maxLines: 2,
-                    enabled: _isCustomizationRequired,
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _deliveryController,
-                    decoration: _inputDecoration('Delivery & Installation'),
-                    maxLines: 2,
                   ),
                   SizedBox(height: 20),
                   DropdownButtonFormField<String>(
@@ -248,17 +230,13 @@ class _AddProductPageState extends State<AddProductPage> {
                     },
                   ),
                   SizedBox(height: 20),
-                  CheckboxListTile(
-                    title: Text('Customization Required'),
-                    value: _isCustomizationRequired,
-                    onChanged: (value) {
-                      setState(() {
-                        _isCustomizationRequired = value!;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 20),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: cngreen, // Use your custom green color
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         if (imageUrl.isEmpty) {
@@ -269,27 +247,19 @@ class _AddProductPageState extends State<AddProductPage> {
                         await FirebaseFirestore.instance
                             .collection("products")
                             .add({
-                          'name': _nameController.text,
                           'description': _descriptionController.text,
                           'price': double.parse(_priceController.text),
                           'category': _category,
-                          'stock': int.parse(_stockCount.text),
-                          'customization': _isCustomizationRequired
-                              ? _customizationController.text
-                              : '',
-                          'delivery': _deliveryController.text,
                           'imageUrl': imageUrl,
-                          'time': DateTime.now()
+                          'time': DateTime.now(),
                         });
 
                         Fluttertoast.showToast(msg: 'Product Added');
                         setState(() {
-                          _nameController.text = '';
-                          _descriptionController.text = '';
-                          _priceController.text = '';
+                          _descriptionController.clear();
+                          _priceController.clear();
                           _category = 'Sofas';
-                          _isCustomizationRequired = false;
-                          _deliveryController.text = '';
+                          _deliveryController.clear();
                           imageUrl = '';
                         });
                       }
@@ -312,16 +282,11 @@ class _AddProductPageState extends State<AddProductPage> {
       Reference referenceDirImages = referenceRoot.child('product_images');
       Reference referenceImageToUpload =
           referenceDirImages.child(uniqueFileName);
-      print(referenceImageToUpload.fullPath);
       i.File imageFile = i.File(file!.path);
-      print(imageFile.path);
 
       try {
-        print('in try');
         await referenceImageToUpload.putFile(imageFile);
-        print('ok1');
         String url = await referenceImageToUpload.getDownloadURL();
-        print('url ok $url');
         setState(() {
           imageUrl = url;
         });
@@ -329,7 +294,7 @@ class _AddProductPageState extends State<AddProductPage> {
         print(e.toString());
       } finally {
         setState(() {
-          _isLoading = false; // Stop loading
+          _isLoading = false;
         });
       }
     }

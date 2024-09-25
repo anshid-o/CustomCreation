@@ -40,24 +40,23 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    print(size.width);
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: cngreen,
+          backgroundColor: col30,
           centerTitle: true,
           title: const Text(
             'Home',
             style: TextStyle(
-                color: col30, fontWeight: FontWeight.bold, fontSize: 24),
+                color: cngreen, fontWeight: FontWeight.bold, fontSize: 24),
           ),
         ),
-        backgroundColor: cngreen,
+        backgroundColor: col30,
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             height: size.height * .8,
             decoration: BoxDecoration(
-              color: cgreen,
+              color: cngreen,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Padding(

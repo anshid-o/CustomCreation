@@ -3,32 +3,56 @@ import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ItemDetailsPage extends StatelessWidget {
   final Map<String, dynamic> item;
-
-  ItemDetailsPage({required this.item});
+  final String cat;
+  ItemDetailsPage({required this.item, required this.cat});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(item['name']),
+        title: Text(cat),
         actions: [
           IconButton(
-            icon: Icon(Icons.favorite_border),
+            icon: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ), // Delete icon
             onPressed: () {
-              // Handle favorite action
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Confirm Deletion'),
+                    content: Text('Are you sure you want to delete this note?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          _deleteItem(item['id'],
+                              context); // Pass the item ID to delete
+                        },
+                        child: Text('Delete'),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
           IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              // Handle add to cart action
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.share),
+            icon: Icon(
+              Icons.share,
+              color: Colors.green,
+            ),
             onPressed: () {
               _shareItem();
             },
@@ -45,20 +69,10 @@ class ItemDetailsPage extends StatelessWidget {
                 item['imageUrl'], // Use network image
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 16),
-              Text(
-                item['name'],
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
               SizedBox(height: 8),
               Text(
                 '\$${item['price'].toString()}',
                 style: TextStyle(fontSize: 22, color: Colors.green),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Stocks Available: ${item['stock'].toString()}',
-                style: TextStyle(fontSize: 22, color: Colors.orange),
               ),
               SizedBox(height: 16),
               Text(
@@ -71,32 +85,6 @@ class ItemDetailsPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
-              Text(
-                'Customization Options:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                item['customizationOptions'] ??
-                    'No customization options available.',
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Delivery & Installation:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                item['delivery'] ?? 'No delivery information available.',
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Related Items:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              // Add related items here
             ],
           ),
         ),
@@ -121,8 +109,6 @@ Check out this amazing item from CustomCreations!
 Name: ${item['name']}
 Price: \$${item['price']}
 Description: ${item['description'] ?? 'No description available.'}
-Customization Options: ${item['customizationOptions'] ?? 'No customization options available.'}
-Delivery & Installation: ${item['delivery'] ?? 'No delivery information available.'}
 
 Contact us for more details or to make a purchase.
 ''';
@@ -131,5 +117,27 @@ Contact us for more details or to make a purchase.
       [path],
       text: shareText,
     );
+  }
+
+  Future<void> _deleteItem(String itemId, BuildContext context) async {
+    try {
+      // Delete the item from Firestore
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(itemId)
+          .delete();
+
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Item deleted successfully.')),
+      );
+      // Optionally, pop the page to go back to the previous screen
+      Navigator.of(context).popUntil(ModalRoute.withName('/'));
+    } catch (e) {
+      // Show an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete item: $e')),
+      );
+    }
   }
 }

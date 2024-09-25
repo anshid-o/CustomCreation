@@ -7,15 +7,15 @@ import 'package:firebase_core/firebase_core.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    // options: const FirebaseOptions(
-    //   apiKey: "AIzaSyCl9ikSan9leewJqHYbk-OEDwXwqJxky_w",
-    //   authDomain: "customcreations-26690.firebaseapp.com",
-    //   projectId: "customcreations-26690",
-    //   storageBucket: "customcreations-26690.appspot.com",
-    //   messagingSenderId: "225504360298",
-    //   appId: "1:225504360298:web:af96254b7e04995b871713",
-    // ),
-  );
+      // options: const FirebaseOptions(
+      //   apiKey: "AIzaSyCl9ikSan9leewJqHYbk-OEDwXwqJxky_w",
+      //   authDomain: "customcreations-26690.firebaseapp.com",
+      //   projectId: "customcreations-26690",
+      //   storageBucket: "customcreations-26690.appspot.com",
+      //   messagingSenderId: "225504360298",
+      //   appId: "1:225504360298:web:af96254b7e04995b871713",
+      // ),
+      );
   runApp(const MyApp());
 }
 

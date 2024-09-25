@@ -82,6 +82,12 @@ class NoteDetailsPage extends StatelessWidget {
                                   .collection('notes')
                                   .doc(note_id)
                                   .delete();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Note deleted successfully.')),
+                              );
+                              Navigator.of(context).pop();
                               Navigator.of(context).pop();
                             },
                             child: Text('Delete'),

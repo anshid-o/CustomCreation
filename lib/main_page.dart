@@ -1,10 +1,9 @@
 import 'package:custom_creations/Notes/note_page.dart';
-import 'package:custom_creations/Transactions/transaction_page.dart';
+
 import 'package:custom_creations/add_product_page.dart';
 import 'package:custom_creations/constants.dart';
 
 import 'package:custom_creations/home/home_page.dart';
-import 'package:custom_creations/overall_economy.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_nav_bar/curved_bar/curved_action_bar.dart';
 import 'package:curved_nav_bar/fab_bar/fab_bottom_app_bar_item.dart';
@@ -21,11 +20,11 @@ class MainPage extends StatelessWidget {
               activeIcon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration:
-                    const BoxDecoration(color: cngreen, shape: BoxShape.circle),
+                    const BoxDecoration(color: col30, shape: BoxShape.circle),
                 child: const Icon(
                   Icons.chair_outlined,
                   size: 25,
-                  color: col30,
+                  color: cngreen,
                 ),
               ),
               inActiveIcon: Container(
@@ -117,8 +116,37 @@ class MainPage extends StatelessWidget {
           bodyItems: [
             const HomePage(),
             NotesPage(),
-            TransactionPage(),
-            OverallPage()
+            Scaffold(
+              backgroundColor: col30,
+              appBar: AppBar(
+                centerTitle: true,
+                backgroundColor: cngreen,
+                title: Text('Transactions'),
+              ),
+              body: Center(
+                child: Text(
+                  'Removed feature',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
+            ),
+            Scaffold(
+              backgroundColor: col30,
+              appBar: AppBar(
+                centerTitle: true,
+                backgroundColor: cngreen,
+                title: Text('Overall'),
+              ),
+              body: Center(
+                child: Text(
+                  'Removed feature',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
+            ),
+
+            // TransactionPage(),
+            // OverallPage()
           ],
           actionBarView: AddProductPage()),
     );

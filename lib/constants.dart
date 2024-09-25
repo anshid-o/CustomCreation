@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const col30 = Colors.white;
+const col30 = const Color.fromRGBO(255, 247, 247, 1);
 
 final List<String> categories = [
   'Sofas',
@@ -15,7 +15,7 @@ const lightWoodcol = Color.fromARGB(255, 255, 248, 220);
 
 const cgreen = Color.fromARGB(255, 111, 158, 134);
 
-const cngreen = Color.fromARGB(255, 16, 69, 83);
+const cngreen = Color.fromRGBO(140, 118, 65, 1);
 
 const cdgreen = Color.fromARGB(255, 148, 188, 164);
 
